@@ -10,4 +10,4 @@ Import-Module c:\Users\User\Documents\GitHub\PowerCLI-scr\PowerCLI-scr
 - Get-SATPClaimrule - Get VMHost's SATP Claimrules
 
 ## Datastore comandlet
-- Expand-Datastore - Expand Datastore after it's LUN expansion. Does not work with Datastore which resides on two or more LUNs. Work well if Datastore is presented to two or more clusters (and if LUN's ID are different in different clusters).
+- Expand-Datastore - Expand Datastore after it's LUN expansion. Does not work with Datastore which resides on two or more LUNs. Works well if Datastore is presented to two or more clusters (and if LUN's ID are different in different clusters).
