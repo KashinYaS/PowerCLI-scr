@@ -39,7 +39,7 @@ Function Expand-Datastore {
 		  Write-Host "  Current Host: $VMHost - Getting ESXi Datastore Expand options" -foreground "Green"
           $ExpandOptions = $DatastoreSystemView.QueryVmfsDatastoreExpandOptions($Datastore.ExtensionData.MoRef)
 		  $DiskName = $ExpandOptions.Spec.Extent.DiskName
-		  Write-Host "  All preparation done" -foreground "Green" 
+		  Write-Host "  Current Host: $VMHost - All preparation done" -foreground "Green" 
           if (-not $ExpandOptions) {
             Write-Host "ERROR (Expand-Datastore): No available space found. If You wish to make a new extent on another LUN please make it manually" -foreground "red"
           }
@@ -48,12 +48,15 @@ Function Expand-Datastore {
             if ($WhatIf) {
               Write-Host "WhatIf (Expand-Datastore): Processing Datastore Expand on disk/LUN: $($DiskName)" -foreground "Green"        
             }
-            else {		  
+            else {
+			  Write-Host "  Current Host: $VMHost - Starting Datastore Expansion" -foreground "Green"
               $Expanded = $DatastoreSystemView.ExpandVmfsDatastore($Datastore.ExtensionData.MoRef,$ExpandOptions.spec)
+			  Write-Host "  Current Host: $VMHost - Datastore Expand cmdlet executed, starting to refresh host storage system to check if datastore really expanded" -foreground "Green"
 			  Start-Sleep -s 3
 			  Get-VmHostStorage -VMHost $VMHost -Refresh
 			  $NewDatastoreSizeGB = ($VMHost | Get-Datastore -Name $Datastore.Name).CapacityGB
 			  $DatastoreSizeDelta = $NewDatastoreSizeGB - $OldDatastoreSizeGB
+			  Write-Host "  Current Host: $VMHost - Datastore Expand cmdlet executed, host storage refresh completed" -foreground "Green"
 			  if ($DatastoreSizeDelta -le 0) {
 			    Write-Host "ERROR (Expand-Datastore): Could not expand $Datastore" -foreground "red"
 			  }
