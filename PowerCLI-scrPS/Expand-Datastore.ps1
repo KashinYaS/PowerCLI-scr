@@ -10,7 +10,7 @@ Function Expand-Datastore {
   }
   else {
 
-    $Datastores = Get-Datastore -Name $Name
+    $Datastores = Get-Datastore -Name $Name | Sort Name
     if (-not $Datastores) {
       write-host "ERROR (Expand-Datastore): No datastore(s) found in current vCenter"  -foreground "Red"
     }
@@ -52,7 +52,7 @@ Function Expand-Datastore {
               $Expanded = $DatastoreSystemView.ExpandVmfsDatastore($Datastore.ExtensionData.MoRef,$ExpandOptions.spec)
 			  Start-Sleep -s 3
 			  Get-VmHostStorage -VMHost $VMHost -Refresh
-			  $NewDatastoreSizeGB = ($VMHost | Get-Datastore -Name $Name).CapacityGB
+			  $NewDatastoreSizeGB = ($VMHost | Get-Datastore -Name $Datastore.Name).CapacityGB
 			  $DatastoreSizeDelta = $NewDatastoreSizeGB - $OldDatastoreSizeGB
 			  if ($DatastoreSizeDelta -le 0) {
 			    Write-Host "ERROR (Expand-Datastore): Could not expand $Datastore" -foreground "red"
