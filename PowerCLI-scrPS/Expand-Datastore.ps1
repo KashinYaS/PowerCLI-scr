@@ -58,7 +58,7 @@ Function Expand-Datastore {
 			  $DatastoreSizeDelta = $NewDatastoreSizeGB - $OldDatastoreSizeGB
 			  Write-Host "  Current Host: $VMHost - Datastore Expand cmdlet executed, host storage refresh completed" -foreground "Green"
 			  if ($DatastoreSizeDelta -le 0) {
-			    Write-Host "ERROR (Expand-Datastore): Could not expand $Datastore" -foreground "red"
+			    Write-Host "ERROR (Expand-Datastore): Could not expand $Datastore (old size: $($OldDatastoreSizeGB), new size: $($NewDatastoreSizeGB))" -foreground "red"
 			  }
 			  else
 			  {
