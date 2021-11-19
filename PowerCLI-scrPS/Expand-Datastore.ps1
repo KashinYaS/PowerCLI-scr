@@ -36,7 +36,7 @@ Function Expand-Datastore {
           Write-Progress -Activity "Increasing Datastore $Datastore Size" -CurrentOperation "Rescan Host's HBAs (wait few minutes...)" -PercentComplete 0
           Write-Host "  Current Host: $VMHost" -foreground "Green"
           Write-Host "  Current Host: $VMHost - Storage refresh started" -foreground "Green"
-		  $VMHost | Get-VMHostStorage -RescanAllHba
+		  $VMHost | Get-VMHostStorage -RescanAllHba -RescanVmfs
           Start-Sleep -s 3
           Write-Progress -Activity "Increasing Datastore $Datastore Size" -CurrentOperation "Refreshing host storage information" -PercentComplete 30
           Get-VmHostStorage -VMHost $VMHost -Refresh
