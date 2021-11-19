@@ -20,7 +20,17 @@ Function Expand-Datastore {
 	    $OldDatastoreSizeGB = $Datastore.CapacityGB
         #$VMHostKey = $Datastore.ExtensionData.Host | Select-Object -last 1 | Select -ExpandProperty Key
         #$VMHost = Get-VMHost -Id $VMHostKey
-		$VMHost = $Datastore | Get-VMHost | Sort-Object -property @{Expression={$_.CpuUsageMhz/$_.CpuTotalMhz}} | Select -First 1
+		$VMHosts = $Datastore | Get-VMHost | Sort-Object -property @{Expression={$_.CpuUsageMhz/$_.CpuTotalMhz}} | Select -First 10
+		# Hosts not in maintenance mode should be preferred (sometimes host in maintenance mode did not see that a LUN has been expanded on a Storage Device
+		$ActiveVMhosts = $VMhosts | where {-not ($_.ConnectionState -eq 'Maintenance')}
+		if ($ActiveVMhosts) {
+		  $VMHostIndex = Get-Random -Minimum 0 -Maximum ($ActiveVMhosts.Count - 1)
+		  $VMHost = $ActiveVMhosts[$VMHostIndex]
+		}
+		else {
+		  $VMHostIndex = Get-Random -Minimum 0 -Maximum ($VMhosts.Count - 1)
+		  $VMHost = $VMhosts[$VMHostIndex]
+		}
 		$VMHostKey = $VMHost.Id
         if ($VMHost) {
           Write-Progress -Activity "Increasing Datastore $Datastore Size" -CurrentOperation "Rescan Host's HBAs (wait few minutes...)" -PercentComplete 0
