@@ -41,15 +41,15 @@ Function Expand-Datastore {
           Write-Progress -Activity "Increasing Datastore $Datastore Size" -CurrentOperation "Refreshing host storage information" -PercentComplete 30
           Get-VmHostStorage -VMHost $VMHost -Refresh
           Write-Progress -Activity "Increasing Datastore $Datastore Size" -CurrentOperation "Getting Free Space on LUN with existing extent" -PercentComplete 50
-          Write-Host "INFO (Expand-Datastore $($Datastore)@$($VMHost.Name)): - Storage refresh completed" -foreground "Green"
-          Write-Host "INFO (Expand-Datastore $($Datastore)@$($VMHost.Name)): - Getting ESXi view" -foreground "Green"
+          Write-Host "INFO (Expand-Datastore $($Datastore)@$($VMHost.Name)): Storage refresh completed" -foreground "Green"
+          Write-Host "INFO (Expand-Datastore $($Datastore)@$($VMHost.Name)): Getting ESXi view" -foreground "Green"
 		  $ESXiView = Get-View -Id $VMHostKey  
-          Write-Host "INFO (Expand-Datastore $($Datastore)@$($VMHost.Name)): - Getting ESXi Datastore System" -foreground "Green"
+          Write-Host "INFO (Expand-Datastore $($Datastore)@$($VMHost.Name)): Getting ESXi Datastore System" -foreground "Green"
           $DatastoreSystemView = Get-View -Id $ESXiView.ConfigManager.DatastoreSystem
-		  Write-Host "INFO (Expand-Datastore $($Datastore)@$($VMHost.Name)): - Getting ESXi Datastore Expand options" -foreground "Green"
+		  Write-Host "INFO (Expand-Datastore $($Datastore)@$($VMHost.Name)): Getting ESXi Datastore Expand options" -foreground "Green"
           $ExpandOptions = $DatastoreSystemView.QueryVmfsDatastoreExpandOptions($Datastore.ExtensionData.MoRef)
 		  $DiskName = $ExpandOptions.Spec.Extent.DiskName
-		  Write-Host "INFO (Expand-Datastore $($Datastore)@$($VMHost.Name)): - All preparation done" -foreground "Green" 
+		  Write-Host "INFO (Expand-Datastore $($Datastore)@$($VMHost.Name)): All preparation done" -foreground "Green" 
           if (-not $ExpandOptions) {
             Write-Host "ERROR (Expand-Datastore): No available space found. If You wish to make a new extent on another LUN please make it manually" -foreground "red"
           }
@@ -59,14 +59,14 @@ Function Expand-Datastore {
               Write-Host "WhatIf (Expand-Datastore): Processing Datastore Expand on disk/LUN: $($DiskName)" -foreground "Green"        
             }
             else {
-			  Write-Host "INFO (Expand-Datastore $($Datastore)@$($VMHost.Name)): - Starting Datastore Expansion" -foreground "Green"
+			  Write-Host "INFO (Expand-Datastore $($Datastore)@$($VMHost.Name)): Starting Datastore Expansion" -foreground "Green"
               $Expanded = $DatastoreSystemView.ExpandVmfsDatastore($Datastore.ExtensionData.MoRef,$ExpandOptions.spec)
-			  Write-Host "INFO (Expand-Datastore $($Datastore)@$($VMHost.Name)): - Datastore Expand cmdlet executed, starting to refresh host storage system to check if datastore really expanded" -foreground "Green"
+			  Write-Host "INFO (Expand-Datastore $($Datastore)@$($VMHost.Name)): Datastore Expand cmdlet executed, starting to refresh host storage system to check if datastore really expanded" -foreground "Green"
 			  Start-Sleep -s 3
 			  Get-VmHostStorage -VMHost $VMHost -Refresh
 			  $NewDatastoreSizeGB = ($VMHost | Get-Datastore -Name $Datastore.Name).CapacityGB
 			  $DatastoreSizeDelta = $NewDatastoreSizeGB - $OldDatastoreSizeGB
-			  Write-Host "INFO (Expand-Datastore $($Datastore)@$($VMHost.Name)): - Datastore Expand cmdlet executed, host storage refresh completed" -foreground "Green"
+			  Write-Host "INFO (Expand-Datastore $($Datastore)@$($VMHost.Name)): Datastore Expand cmdlet executed, host storage refresh completed" -foreground "Green"
 			  if ($DatastoreSizeDelta -le 0) {
 			    Write-Host "ERROR (Expand-Datastore): Could not expand $Datastore (old size: $($OldDatastoreSizeGB), new size: $($NewDatastoreSizeGB))" -foreground "red"
 			  }
