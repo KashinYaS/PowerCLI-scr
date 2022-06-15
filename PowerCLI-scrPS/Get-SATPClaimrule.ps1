@@ -1,7 +1,7 @@
 Function Get-SATPClaimrule {
   [CmdletBinding(DefaultParameterSetName="Default")]
   PARAM (
-    [PARAMETER(Mandatory=$True, Position=0,HelpMessage = "VMHost",ParameterSetName='Default')][PSObject]$VMHost
+    [PARAMETER(Mandatory=$True, Position=0,HelpMessage = "VMHost",ParameterSetName='Default',ValueFromPipeline=$true)][PSObject]$VMHost
   )
   $RetVal = $null
   

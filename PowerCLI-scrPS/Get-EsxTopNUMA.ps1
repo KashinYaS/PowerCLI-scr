@@ -8,6 +8,7 @@ Function Get-EsxTopNUMA {
 			[PSCustomObject[]]$VMHost
         )
 	
+  process {	
 	$AllHostsDataSet = @()
 	
 	foreach ($CurrentVMhost in $VMhost) {
@@ -69,6 +70,7 @@ Function Get-EsxTopNUMA {
 	}
 	
     return($AllHostsDataSet)
+  }
 }
 
 
